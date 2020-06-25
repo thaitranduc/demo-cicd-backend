@@ -20,7 +20,3 @@ workflows:
     maven_test:
         jobs:
             - maven/test # checkout, build, test, and upload test results
-            -   build:
-                    filters:
-                        branches:
-                            only:master
