@@ -1,55 +1,9 @@
-version: 2
-jobs:
-    build:
-        docker:
-            -   image: circleci/openjdk:8-jdk
-        working_directory: ~/repo
-        environment:
-            JVM_OPTS: -Xmx3200m
-            TERM: dumb
+version: 2.1
 
-        steps:
-            - checkout
-            -   restore_cache:
-                    keys:
-                        - v1-dependencies-{{ checksum "build.gradle" }}
-                        - v1-dependencies-
-            -   run: gradle dependencies
-            -   save_cache:
-                    paths:
-                        - ~/.m2
-                    key: v1-dependencies-{{ checksum "build.gradle" }}
-            -   run: gradle build
-            -   run: |
-                    cp ~/repo/Procfile ~/repo/build/libs/
-                    cd ~/repo/build/libs/
-                    zip demo-cicd-backend.zip *
-                    rm ~/repo/build/libs/*.jar
-            -   persist_to_workspace:
-                    root: .
-                    paths: build/libs/
-#    deploy:
-#        docker:
-#            -   image: circleci/python:3.6.8
-#        steps:
-#            -   attach_workspace:
-#                    at: ~/repo
-#            -   run: sudo pip install awscli
-#            -   run: |
-#                    aws s3 cp ~/repo/build/libs/etbs.zip s3://elasticbeanstalk-ap-southeast-1-453030339737/etbs.zip --region ap-southeast-1
-#                    aws elasticbeanstalk create-application-version --application-name ETBS --version-label ${CIRCLE_SHA1} --source-bundle S3Bucket="elasticbeanstalk-ap-southeast-1-453030339737",S3Key="etbs.zip" --auto-create-application --region ap-southeast-1
-#                    aws elasticbeanstalk update-environment --application-name ETBS --environment-name Etbs-env --version-label ${CIRCLE_SHA1} --region ap-southeast-1
+orbs:
+    maven: circleci/maven@0.0.12
+
 workflows:
-    version: 2
-    build-and-deploy:
+    maven_test:
         jobs:
-            -   build:
-                    filters:
-                        branches:
-                            only: master
-#            -   deploy:
-#                    requires:
-#                        - build
-#                    filters:
-#                        branches:
-#                            only: master
+            - maven/test # checkout, build, test, and upload test results
