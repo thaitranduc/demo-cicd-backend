@@ -2,6 +2,8 @@ version: 2.1
 jobs:
     build:
         working_directory: ~/demo-cicd-backend
+        docker:
+            -   image: circleci/openjdk:8-jdk-stretch
         steps:
             - checkout
             -   restore_cache:
