@@ -17,6 +17,19 @@ jobs:
 orbs:
     maven: circleci/maven@0.0.12
 workflows:
+    version: 2
     maven_test:
         jobs:
             - maven/test # checkout, build, test, and upload test results
+    build-and-deploy:
+        jobs:
+            -   build:
+                    filters:
+                        branches:
+                            only: master
+            -   deploy:
+                    requires:
+                        - build
+                    filters:
+                        branches:
+                            only: master
