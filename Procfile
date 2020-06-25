@@ -1,1 +1,0 @@
-web: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5003 -jar demo-cicd-backend-1.0.0.jar
