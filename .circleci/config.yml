@@ -22,9 +22,3 @@ workflows:
     maven_test:
         jobs:
             - maven/test
-            -   heroku/deploy-via-git:
-                    requires:
-                        - maven/test
-                    filters:
-                        branches:
-                            only: master
