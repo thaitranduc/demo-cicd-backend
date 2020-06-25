@@ -1,5 +1,21 @@
 version: 2.1
-
+jobs:
+    build:
+        working_directory: ~/demo-cicd-backend
+        steps:
+            - checkout
+            -   restore_cache:
+                    key: demo-cicd-backend-{{ checksum "pom.xml" }}
+            -   run: mvn dependency:go-offline
+            -   save_cache:
+                    paths:
+                        - ~/.m2
+                    key: demo-cicd-backend-{{ checksum "pom.xml" }}
+            -   run: mvn package
+                         - store_test_results:
+                         path: target/surefile-reports
+                                   - store_artifacts:
+                         path: target/demo-cicd-backend
 orbs:
     maven: circleci/maven@0.0.12
 
@@ -7,3 +23,7 @@ workflows:
     maven_test:
         jobs:
             - maven/test # checkout, build, test, and upload test results
+            - build:
+                filters:
+                    branches:
+                        only:master
